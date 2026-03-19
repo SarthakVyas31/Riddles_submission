@@ -1,12 +1,11 @@
 import { google } from "googleapis";
-import fs from "fs";
-import path from "path";
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
 async function getSheetsClient() {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: path.join(process.cwd(), "service-account.json"),
+  const auth = new google.auth.JWT({
+    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     scopes: SCOPES,
   });
 
