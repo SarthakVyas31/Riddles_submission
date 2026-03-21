@@ -17,15 +17,16 @@ export async function appendRiddle(data: {
   topic: string;
   riddle: string;
   answer: string;
+  difficulty: string;
 }) {
   const sheets = await getSheetsClient();
   const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
-  const range = "Sheet1!A:D";
+  const range = "Sheet1!A:E";
 
   // 1. Check if headers exist
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: "Sheet1!A1:D1",
+    range: "Sheet1!A1:E1",
   });
 
   const rows = response.data.values;
@@ -33,10 +34,10 @@ export async function appendRiddle(data: {
     // Create headers if they don't exist
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: "Sheet1!A1:D1",
+      range: "Sheet1!A1:E1",
       valueInputOption: "RAW",
       requestBody: {
-        values: [["Name", "Riddle Topic", "Riddle", "Answer"]],
+        values: [["Name", "Riddle Topic", "Riddle", "Answer", "Difficulty"]],
       },
     });
 
@@ -63,7 +64,7 @@ export async function appendRiddle(data: {
                 sheetId: 0,
                 dimension: "COLUMNS",
                 startIndex: 0,
-                endIndex: 4,
+                endIndex: 5,
               },
             },
           },
@@ -89,11 +90,11 @@ export async function appendRiddle(data: {
     range,
     valueInputOption: "RAW",
     requestBody: {
-      values: [[data.name, data.topic, data.riddle, data.answer]],
+      values: [[data.name, data.topic, data.riddle, data.answer, data.difficulty]],
     },
   });
 
-  // 3. Re-apply auto-resize to ensure new content fits well (optional but good for 'production-ready')
+  // 3. Re-apply auto-resize to ensure new content fits well
   await sheets.spreadsheets.batchUpdate({
     spreadsheetId,
     requestBody: {
@@ -104,7 +105,7 @@ export async function appendRiddle(data: {
               sheetId: 0,
               dimension: "COLUMNS",
               startIndex: 0,
-              endIndex: 4,
+              endIndex: 5,
             },
           },
         },

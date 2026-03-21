@@ -34,6 +34,9 @@ const formSchema = z.object({
   topicDetails: z.string().optional(),
   riddle: z.string().min(10, "Riddle must be at least 10 characters"),
   answer: z.string().min(1, "Answer is required"),
+  difficulty: z.enum(["Easy", "Medium", "Hard"], {
+    message: "Please select a difficulty level",
+  }),
 }).refine((data) => {
   if (data.topic === "Others" && (!data.topicDetails || data.topicDetails.length < 2)) {
     return false;
@@ -63,6 +66,7 @@ export function RiddleForm() {
       topicDetails: "",
       riddle: "",
       answer: "",
+      difficulty: undefined,
     },
   });
 
@@ -75,6 +79,7 @@ export function RiddleForm() {
     formData.append("topic", values.topic === "Others" ? (values.topicDetails || "Other") : values.topic);
     formData.append("riddle", values.riddle);
     formData.append("answer", values.answer);
+    formData.append("difficulty", values.difficulty);
 
     const result = await submitRiddle(formData);
 
@@ -154,6 +159,29 @@ export function RiddleForm() {
                 )}
               />
             )}
+
+            <FormField
+              control={form.control}
+              name="difficulty"
+              render={({ field }: { field: any }) => (
+                <FormItem>
+                  <FormLabel>Difficulty</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select difficulty" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Easy">Easy</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="Hard">Hard</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

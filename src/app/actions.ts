@@ -8,13 +8,14 @@ export async function submitRiddle(formData: FormData) {
   const topic = formData.get("topic") as string;
   const riddle = formData.get("riddle") as string;
   const answer = formData.get("answer") as string;
+  const difficulty = formData.get("difficulty") as string;
 
-  if (!name || !topic || !riddle || !answer) {
+  if (!name || !topic || !riddle || !answer || !difficulty) {
     throw new Error("All fields are required");
   }
 
   try {
-    await appendRiddle({ name, topic, riddle, answer });
+    await appendRiddle({ name, topic, riddle, answer, difficulty });
     revalidatePath("/");
     return { success: true };
   } catch (error: any) {
